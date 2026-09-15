@@ -285,14 +285,14 @@ Be specific and reference actual quotes from the conversation. Under 300 words."
 
 def _get_opening_sync(normal_prompt: str) -> str:
     resp = _get_groq().chat.completions.create(
-        model="openai/gpt-oss-120b",
+        model="qwen/qwen3.6-27b",
         messages=[
             {"role": "system", "content": normal_prompt},
             {"role": "user",   "content": "Start the conversation. Say your opening line."},
         ],
         max_tokens=300,
         temperature=1.0,
-        reasoning_effort="low",
+        reasoning_effort="none",
     )
     return resp.choices[0].message.content.strip()
 
@@ -301,7 +301,7 @@ def _classify_user_sync(category: str, conversation: list, user_input: str) -> s
     """Returns FELL | AWARE | NEUTRAL — always English one-word token."""
     try:
         resp = _get_groq().chat.completions.create(
-            model="openai/gpt-oss-120b",
+            model="qwen/qwen3.6-27b",
             messages=[
                 {"role": "system", "content": _classify_prompt(category)},
                 {"role": "user",   "content": (
@@ -316,7 +316,7 @@ def _classify_user_sync(category: str, conversation: list, user_input: str) -> s
             ],
             max_tokens=20,
             temperature=0.0,
-            reasoning_effort="low",
+            reasoning_effort="none",
         )
         verdict = (resp.choices[0].message.content or "").strip().upper()
         return verdict if verdict in ("FELL", "AWARE", "NEUTRAL") else "NEUTRAL"
@@ -326,11 +326,11 @@ def _classify_user_sync(category: str, conversation: list, user_input: str) -> s
 
 def _bot_reply_sync(system_prompt: str, conversation: list) -> str:
     resp = _get_groq().chat.completions.create(
-        model="openai/gpt-oss-120b",
+        model="qwen/qwen3.6-27b",
         messages=[{"role": "system", "content": system_prompt}] + conversation,
         max_tokens=400,
         temperature=0.85,
-        reasoning_effort="low",
+        reasoning_effort="none",
     )
     return resp.choices[0].message.content.strip()
 
@@ -347,28 +347,28 @@ def _format_convo(conversation: list) -> str:
 
 def _feedback_sync(category: str, conversation: list, language: str) -> str:
     resp = _get_groq().chat.completions.create(
-        model="openai/gpt-oss-120b",
+        model="qwen/qwen3.6-27b",
         messages=[
             {"role": "system", "content": _feedback_prompt(category, language)},
             {"role": "user",   "content": f"Full conversation:\n\n{_format_convo(conversation)}"},
         ],
         max_tokens=700,
         temperature=0.7,
-        reasoning_effort="low",
+        reasoning_effort="none",
     )
     return resp.choices[0].message.content.strip()
 
 
 def _success_feedback_sync(category: str, conversation: list, language: str) -> str:
     resp = _get_groq().chat.completions.create(
-        model="openai/gpt-oss-120b",
+        model="qwen/qwen3.6-27b",
         messages=[
             {"role": "system", "content": _success_feedback_prompt(category, language)},
             {"role": "user",   "content": f"Full conversation:\n\n{_format_convo(conversation)}"},
         ],
         max_tokens=700,
         temperature=0.7,
-        reasoning_effort="low",
+        reasoning_effort="none",
     )
     return resp.choices[0].message.content.strip()
 
