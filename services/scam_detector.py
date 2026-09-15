@@ -140,7 +140,7 @@ def _analyze_sync(message: str, language: str = "en") -> dict:
 
     client = _get_client()
     completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-120b",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": f"Analyse this message:\n\n{message}"},
