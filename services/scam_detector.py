@@ -146,7 +146,8 @@ def _analyze_sync(message: str, language: str = "en") -> dict:
             {"role": "user", "content": f"Analyse this message:\n\n{message}"},
         ],
         temperature=0.2,
-        max_tokens=700,
+        max_tokens=900,
+        reasoning_effort="low",
         response_format={"type": "json_object"},
     )
     raw = completion.choices[0].message.content.strip()

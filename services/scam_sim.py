@@ -279,8 +279,9 @@ def _get_opening_sync(normal_prompt: str) -> str:
             {"role": "system", "content": normal_prompt},
             {"role": "user",   "content": "Start the conversation. Say your opening line."},
         ],
-        max_tokens=200,
+        max_tokens=300,
         temperature=1.0,
+        reasoning_effort="low",
     )
     return resp.choices[0].message.content.strip()
 
@@ -302,10 +303,11 @@ def _classify_user_sync(category: str, conversation: list, user_input: str) -> s
                     + f"\n\nUser's latest message: {user_input}"
                 )},
             ],
-            max_tokens=5,
+            max_tokens=20,
             temperature=0.0,
+            reasoning_effort="low",
         )
-        verdict = resp.choices[0].message.content.strip().upper()
+        verdict = (resp.choices[0].message.content or "").strip().upper()
         return verdict if verdict in ("FELL", "AWARE", "NEUTRAL") else "NEUTRAL"
     except Exception:
         return "NEUTRAL"
@@ -315,8 +317,9 @@ def _bot_reply_sync(system_prompt: str, conversation: list) -> str:
     resp = _get_groq().chat.completions.create(
         model="openai/gpt-oss-120b",
         messages=[{"role": "system", "content": system_prompt}] + conversation,
-        max_tokens=200,
+        max_tokens=400,
         temperature=0.85,
+        reasoning_effort="low",
     )
     return resp.choices[0].message.content.strip()
 
@@ -338,8 +341,9 @@ def _feedback_sync(category: str, conversation: list, language: str) -> str:
             {"role": "system", "content": _feedback_prompt(category, language)},
             {"role": "user",   "content": f"Full conversation:\n\n{_format_convo(conversation)}"},
         ],
-        max_tokens=500,
+        max_tokens=700,
         temperature=0.7,
+        reasoning_effort="low",
     )
     return resp.choices[0].message.content.strip()
 
@@ -351,8 +355,9 @@ def _success_feedback_sync(category: str, conversation: list, language: str) -> 
             {"role": "system", "content": _success_feedback_prompt(category, language)},
             {"role": "user",   "content": f"Full conversation:\n\n{_format_convo(conversation)}"},
         ],
-        max_tokens=500,
+        max_tokens=700,
         temperature=0.7,
+        reasoning_effort="low",
     )
     return resp.choices[0].message.content.strip()
 
