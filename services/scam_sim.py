@@ -318,8 +318,15 @@ def _classify_user_sync(category: str, conversation: list, user_input: str) -> s
             temperature=0.0,
             reasoning_effort="low",
         )
-        verdict = (resp.choices[0].message.content or "").strip().upper()
-        return verdict if verdict in ("FELL", "AWARE", "NEUTRAL") else "NEUTRAL"
+        # Match by containment, not exact equality: reasoning models sometimes
+        # wrap the verdict in a short explanation or punctuation even when
+        # asked for a single word, and an exact-match check would silently
+        # discard a correct verdict and default to NEUTRAL.
+        verdict_text = (resp.choices[0].message.content or "").strip().upper()
+        for candidate in ("FELL", "AWARE", "NEUTRAL"):
+            if candidate in verdict_text:
+                return candidate
+        return "NEUTRAL"
     except Exception:
         return "NEUTRAL"
 
