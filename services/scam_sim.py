@@ -314,7 +314,7 @@ def _classify_user_sync(category: str, conversation: list, user_input: str) -> s
                     + f"\n\nUser's latest message: {user_input}"
                 )},
             ],
-            max_tokens=20,
+            max_tokens=200,
             temperature=0.0,
             reasoning_effort="low",
         )
